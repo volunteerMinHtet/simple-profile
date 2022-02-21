@@ -32,8 +32,8 @@ Route::post('/create-account', [AuthController::class, 'createAccount']);
 Route::post('/login', [AuthController::class, 'login']);
 
 
-Route::get('/clean-storage-dir', function () {
+Route::get('/check-qrcodes-dir', function () {
     // Storage::deleteDirectory('backgrounds');
 
-    return response()->json(['files' => Storage::disk('local')->allFiles()]);
+    return response()->json(['files' => Storage::disk('public')->allFiles()]);
 });

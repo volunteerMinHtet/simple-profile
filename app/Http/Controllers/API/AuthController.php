@@ -21,7 +21,7 @@ class AuthController extends Controller
     {
         if (!File::isDirectory($path)) {
             $createDir = File::makeDirectory($path, 0777, true, true);
-            return response()->json(['status' => $createDir], 200);
+            // return response()->json(['status' => $createDir], 200);
         }
     }
 
@@ -59,7 +59,7 @@ class AuthController extends Controller
 
             $qrcodeUrl =   $this->generateQrCode($profileLink);
 
-            return response()->json(['qrcode_url' => $qrcodeUrl, 'files' => Storage::disk('public')->allFiles('user_profiles/qrcodes')]);
+            // return response()->json(['qrcode_url' => $qrcodeUrl, 'files' => Storage::disk('public')->allFiles('user_profiles/qrcodes')]);
 
             if ($qrcodeUrl) {
                 $user = User::create([
