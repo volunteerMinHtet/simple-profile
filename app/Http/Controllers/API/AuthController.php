@@ -34,7 +34,7 @@ class AuthController extends Controller
         $qrcode->setStorPath($path);
         $qrcode->getBarcodePNGPath($value, 'QRCODE');
 
-        return response()->json(['type' => gettype($qrcode), 200]);
+        // return response()->json(['type' => gettype($qrcode), 200]);
 
         $checkFile = File::exists(public_path('images/user_profiles/qrcodes/' . $value . 'qrcode.png'));
 
@@ -50,9 +50,6 @@ class AuthController extends Controller
 
     public function createAccount(CreateAccountRequest $request)
     {
-        $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
-        $qrcodeUrl = $this->generateQrCode($profileLink);
-
         try {
             $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
 
