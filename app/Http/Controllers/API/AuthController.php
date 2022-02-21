@@ -20,7 +20,8 @@ class AuthController extends Controller
     protected function checkAndCreateDir($path)
     {
         if (!File::isDirectory($path)) {
-            File::makeDirectory($path, 0777, true, true);
+            $createDir = File::makeDirectory($path, 0777, true, true);
+            return response()->json(['status' => $createDir], 200);
         }
     }
 
@@ -33,8 +34,6 @@ class AuthController extends Controller
         $qrcode = new DNS2D();
         $qrcode->setStorPath($path);
         $qrcode->getBarcodePNGPath($value, 'QRCODE');
-
-
 
         $checkFile = Storage::disk('public')->exists('user_profiles/qrcodes/' . $value . 'qrcode.png');
 
