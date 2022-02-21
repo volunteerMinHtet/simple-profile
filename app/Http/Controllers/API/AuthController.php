@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Traits\ResponseAPI;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use \Milon\Barcode\DNS2D;
@@ -16,31 +17,84 @@ class AuthController extends Controller
 {
     use ResponseAPI;
 
+    protected function checkAndCreateDir($path)
+    {
+        if (!File::isDirectory($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+    }
+
+    protected function generateQrCode($value = null)
+    {
+        $path = storage_path('app/public/user_profiles/qrcodes');
+
+        $this->checkAndCreateDir($path);
+
+        $qrcode = new DNS2D();
+        $qrcode->setStorPath($path);
+        $qrcode->getBarcodePNGPath($value, 'QRCODE');
+
+        $checkFile = Storage::disk('public')->exists('user_profiles/qrcodes/' . $value . 'qrcode.png');
+
+        if ($checkFile) {
+            return url(Storage::url('user_profiles/qrcodes/' . $value . 'qrcode.png'));
+        }
+
+        return false;
+    }
+
     public function createAccount(CreateAccountRequest $request)
     {
         try {
-            $profile_link = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
+            // $path = storage_path('app/public/user_profiles/qrcodes');
 
-            $qrcode = new DNS2D();
-            $qrcode->setStorPath(storage_path('app/public/user_profiles/qrcodes'));
-            $qrcode->getBarcodePNGPath($profile_link, 'QRCODE');
+            // $this->checkAndCreateDir($path);
 
-            $checkFile = Storage::disk('public')->exists('user_profiles/qrcodes/' . $profile_link . 'qrcode.png');
+            // if (!File::isDirectory($path)) {
+            //     File::makeDirectory($path, 0777, true, true);
+            // }
 
-            if ($checkFile) {
+            $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
+
+            $qrcodeUrl =   $this->generateQrCode($profileLink);
+
+            if ($qrcodeUrl) {
                 $user = User::create([
                     'name' => $request->name,
                     'email' => $request->email,
                     'user_name' => $request->user_name,
                     'password' => bcrypt($request->password),
-                    'profile_link' => $profile_link,
-                    'qrcode' => url(Storage::url('user_profiles/qrcodes/' . $profile_link . 'qrcode.png'))
+                    'profile_link' => $profileLink,
+                    'qrcode' => $qrcodeUrl
                 ]);
 
                 $token = $user->createToken('token')->plainTextToken;
 
                 return $this->successResponse(['token' => $token], 201);
             }
+
+            // $qrcode = new DNS2D();
+            // $qrcode->setStorPath($path);
+            // $qrcode->getBarcodePNGPath($profileLink, 'QRCODE');
+
+            // $checkFile = Storage::disk('public')->exists('user_profiles/qrcodes/' . $profileLink . 'qrcode.png');
+
+            // return response()->json(['file_exits' => $checkFile, 'files' => Storage::disk('public')->allFiles('user_profiles/qrcodes')]);
+
+            // if ($checkFile) {
+            //     $user = User::create([
+            //         'name' => $request->name,
+            //         'email' => $request->email,
+            //         'user_name' => $request->user_name,
+            //         'password' => bcrypt($request->password),
+            //         'profile_link' => $profileLink,
+            //         'qrcode' => url(Storage::url('user_profiles/qrcodes/' . $profileLink . 'qrcode.png'))
+            //     ]);
+
+            //     $token = $user->createToken('token')->plainTextToken;
+
+            //     return $this->successResponse(['token' => $token], 201);
+            // }
 
             return $this->errorResponse('Failed to create account', 500);
         } catch (\Exception $e) {
