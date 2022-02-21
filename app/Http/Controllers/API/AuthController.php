@@ -50,30 +50,32 @@ class AuthController extends Controller
 
     public function createAccount(CreateAccountRequest $request)
     {
-        try {
-            $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
+        $this->generateQrCode('aaaa');
 
-            $qrcodeUrl = $this->generateQrCode($profileLink);
+        // try {
+        //     $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
 
-            if ($qrcodeUrl) {
-                $user = User::create([
-                    'name' => $request->name,
-                    'email' => $request->email,
-                    'user_name' => $request->user_name,
-                    'password' => bcrypt($request->password),
-                    'profile_link' => $profileLink,
-                    'qrcode' => $qrcodeUrl
-                ]);
+        //     $qrcodeUrl = $this->generateQrCode($profileLink);
 
-                $token = $user->createToken('token')->plainTextToken;
+        //     if ($qrcodeUrl) {
+        //         $user = User::create([
+        //             'name' => $request->name,
+        //             'email' => $request->email,
+        //             'user_name' => $request->user_name,
+        //             'password' => bcrypt($request->password),
+        //             'profile_link' => $profileLink,
+        //             'qrcode' => $qrcodeUrl
+        //         ]);
 
-                return $this->successResponse(['token' => $token], 201);
-            }
+        //         $token = $user->createToken('token')->plainTextToken;
 
-            return $this->errorResponse('Failed to create account', 500);
-        } catch (\Exception $e) {
-            return $this->errorResponse($e->getMessage(), $e->getCode());
-        }
+        //         return $this->successResponse(['token' => $token], 201);
+        //     }
+
+        //     return $this->errorResponse('Failed to create account', 500);
+        // } catch (\Exception $e) {
+        //     return $this->errorResponse($e->getMessage(), $e->getCode());
+        // }
     }
 
     public function login(LoginRequest $request)
