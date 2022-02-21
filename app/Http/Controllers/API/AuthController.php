@@ -50,7 +50,8 @@ class AuthController extends Controller
 
     public function createAccount(CreateAccountRequest $request)
     {
-        $this->generateQrCode('aaaa');
+        $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
+        $this->generateQrCode($profileLink);
 
         // try {
         //     $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);

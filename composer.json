@@ -14,7 +14,8 @@
         "laravel/framework": "^8.75",
         "laravel/sanctum": "^2.14",
         "laravel/tinker": "^2.5",
-        "milon/barcode": "^9.0"
+        "milon/barcode": "^9.0",
+        "ext-gd": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
