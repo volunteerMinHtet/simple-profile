@@ -30,10 +30,3 @@ Route::middleware('auth:sanctum')->get('/user-qrcode', function (Request $reques
 
 Route::post('/create-account', [AuthController::class, 'createAccount']);
 Route::post('/login', [AuthController::class, 'login']);
-
-
-Route::get('/check-qrcodes-dir', function () {
-    // Storage::deleteDirectory('backgrounds');
-
-    return response()->json(['files' => Storage::disk('public')->allFiles()]);
-});
