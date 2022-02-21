@@ -34,7 +34,7 @@ class AuthController extends Controller
         $qrcode->setStorPath($path);
         $qrcode->getBarcodePNGPath($value, 'QRCODE');
 
-        return response(gettype($qrcode));
+        return response()->json(['type' => gettype($qrcode), 200]);
 
         $checkFile = File::exists(public_path('images/user_profiles/qrcodes/' . $value . 'qrcode.png'));
 
