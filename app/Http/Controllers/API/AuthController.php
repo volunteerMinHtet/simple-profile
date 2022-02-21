@@ -26,7 +26,7 @@ class AuthController extends Controller
 
     protected function generateQrCode($value = null)
     {
-        $path = storage_path('app/public/user_profiles/qrcodes');
+        $path = public_path('images/user_profiles/qrcodes');
 
         $this->checkAndCreateDir($path);
 
@@ -34,10 +34,13 @@ class AuthController extends Controller
         $qrcode->setStorPath($path);
         $qrcode->getBarcodePNGPath($value, 'QRCODE');
 
-        $checkFile = Storage::disk('public')->exists('user_profiles/qrcodes/' . $value . 'qrcode.png');
+        $checkFile = File::exists(public_path('images/user_profiles/qrcodes/' . $value . 'qrcode.png'));
+
+        // $checkFile = Storage::disk('public')->exists('images/user_profiles/qrcodes/' . $value . 'qrcode.png');
 
         if ($checkFile) {
-            return url(Storage::url('user_profiles/qrcodes/' . $value . 'qrcode.png'));
+            // return public_path('images/user_profiles/qrcodes/' . $value . 'qrcode.png');
+            return url('images/user_profiles/qrcodes/' . $value . 'qrcode.png');
         }
 
         return false;
@@ -45,30 +48,30 @@ class AuthController extends Controller
 
     public function createAccount(CreateAccountRequest $request)
     {
-        // try {
-        $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
+        try {
+            $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
 
-        $qrcodeUrl =   $this->generateQrCode($profileLink);
+            $qrcodeUrl = $this->generateQrCode($profileLink);
 
-        if ($qrcodeUrl) {
-            $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'user_name' => $request->user_name,
-                'password' => bcrypt($request->password),
-                'profile_link' => $profileLink,
-                'qrcode' => $qrcodeUrl
-            ]);
+            if ($qrcodeUrl) {
+                $user = User::create([
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'user_name' => $request->user_name,
+                    'password' => bcrypt($request->password),
+                    'profile_link' => $profileLink,
+                    'qrcode' => $qrcodeUrl
+                ]);
 
-            $token = $user->createToken('token')->plainTextToken;
+                $token = $user->createToken('token')->plainTextToken;
 
-            return $this->successResponse(['token' => $token], 201);
+                return $this->successResponse(['token' => $token], 201);
+            }
+
+            return $this->errorResponse('Failed to create account', 500);
+        } catch (\Exception $e) {
+            return $this->errorResponse($e->getMessage(), $e->getCode());
         }
-
-        // return $this->errorResponse('Failed to create account', 500);
-        // } catch (\Exception $e) {
-        //     return $this->errorResponse($e->getMessage(), $e->getCode());
-        // }
     }
 
     public function login(LoginRequest $request)
