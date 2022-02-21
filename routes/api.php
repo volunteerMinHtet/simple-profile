@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\API\{AuthController};
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use \Milon\Barcode\DNS1D;
+use \Milon\Barcode\DNS2D;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,6 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/greet', function () {
-    return response('Hello! from Penguin');
-});
+Route::post('/create-account', [AuthController::class, 'createAccount']);
+Route::post('/login', [AuthController::class, 'login']);
