@@ -65,7 +65,7 @@ class AuthController extends Controller
             return $this->successResponse(['token' => $token], 201);
         }
 
-        return $this->errorResponse('Failed to create account', 500);
+        // return $this->errorResponse('Failed to create account', 500);
         // } catch (\Exception $e) {
         //     return $this->errorResponse($e->getMessage(), $e->getCode());
         // }
