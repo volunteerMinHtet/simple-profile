@@ -21,5 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:sanctum')->get('/user-qrcode', function (Request $request) {
+    $user = $request->user();
+
+    return storage_path($user->qrcode);
+});
+
 Route::post('/create-account', [AuthController::class, 'createAccount']);
 Route::post('/login', [AuthController::class, 'login']);
