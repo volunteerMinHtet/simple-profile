@@ -53,6 +53,10 @@ class AuthController extends Controller
         $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
         $this->generateQrCode($profileLink);
 
+        $qrcodes =  File::files(public_path('images/user_profiles/qrcodes'));
+
+        return response($qrcodes);
+
         // try {
         //     $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
 
