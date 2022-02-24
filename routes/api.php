@@ -30,3 +30,7 @@ Route::middleware('auth:sanctum')->get('/user-qrcode', function (Request $reques
 
 Route::post('/create-account', [AuthController::class, 'createAccount']);
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/greeting', function () {
+    return response('Hello Penguin!');
+});
