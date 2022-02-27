@@ -94,4 +94,15 @@ class AuthController extends Controller
             return $this->errorResponse($e->getMessage(), $e->getCode());
         }
     }
+
+    public function getUserByProfileLink(Request $request, $profileLink)
+    {
+        $user = User::where('profile_link', '=', $profileLink)->first();
+
+        if (!$user) {
+            return $this->errorResponse(['message' => 'User not found'], 404);
+        }
+
+        return $this->successResponse($user, 200);
+    }
 }
