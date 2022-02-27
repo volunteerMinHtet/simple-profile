@@ -24,7 +24,7 @@ class AuthController extends Controller
         }
     }
 
-    protected function generateQrCode($value = null)
+    protected function generateQrCode($fileName, $data = null)
     {
         $path = public_path('images/user_profiles/qrcodes');
 
@@ -32,17 +32,17 @@ class AuthController extends Controller
 
         $qrcode = new DNS2D();
         $qrcode->setStorPath($path);
-        $qrcode->getBarcodePNGPath($value, 'QRCODE');
+        $qrcode->getBarcodePNGPath($data, 'QRCODE');
 
         // return response()->json(['type' => gettype($qrcode), 200]);
 
-        $checkFile = File::exists(public_path('images/user_profiles/qrcodes/' . $value . 'qrcode.png'));
+        $checkFile = File::exists(public_path('images/user_profiles/qrcodes/' . $fileName . 'qrcode.png'));
 
-        // $checkFile = Storage::disk('public')->exists('images/user_profiles/qrcodes/' . $value . 'qrcode.png');
+        // $checkFile = Storage::disk('public')->exists('images/user_profiles/qrcodes/' . $data . 'qrcode.png');
 
         if ($checkFile) {
-            // return public_path('images/user_profiles/qrcodes/' . $value . 'qrcode.png');
-            return url('images/user_profiles/qrcodes/' . $value . 'qrcode.png');
+            // return public_path('images/user_profiles/qrcodes/' . $data . 'qrcode.png');
+            return url('images/user_profiles/qrcodes/' . $fileName . 'qrcode.png');
         }
 
         return false;
@@ -53,7 +53,10 @@ class AuthController extends Controller
         try {
             $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
 
-            $qrcodeUrl = $this->generateQrCode($profileLink);
+            // $downloadImageLink = url('images/user_profiles/qrcodes/' . $profileLink . '.qrcode.png');
+            $data = 'simple-profile://profile/' . $profileLink;
+
+            $qrcodeUrl = $this->generateQrCode($profileLink, $data);
 
             if ($qrcodeUrl) {
                 $user = User::create([
