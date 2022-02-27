@@ -58,8 +58,6 @@ class AuthController extends Controller
 
             $qrcodeUrl = $this->generateQrCode($profileLink, $data);
 
-            return response()->json(['applink' => $data, 'qrcode' => $qrcodeUrl]);
-
             if ($qrcodeUrl) {
                 $user = User::create([
                     'name' => $request->name,
