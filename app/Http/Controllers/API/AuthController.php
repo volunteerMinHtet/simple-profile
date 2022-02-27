@@ -36,13 +36,13 @@ class AuthController extends Controller
 
         // return response()->json(['type' => gettype($qrcode), 200]);
 
-        $checkFile = File::exists(public_path('images/user_profiles/qrcodes/' . $fileName . 'qrcode.png'));
+        $checkFile = File::exists(public_path('images/user_profiles/qrcodes/simple-profileprofile' . $fileName . 'qrcode.png'));
 
         // $checkFile = Storage::disk('public')->exists('images/user_profiles/qrcodes/' . $data . 'qrcode.png');
 
         if ($checkFile) {
             // return public_path('images/user_profiles/qrcodes/' . $data . 'qrcode.png');
-            return url('images/user_profiles/qrcodes/' . $fileName . 'qrcode.png');
+            return url('images/user_profiles/qrcodes/simple-profileprofile' . $fileName . 'qrcode.png');
         }
 
         return false;
@@ -54,9 +54,11 @@ class AuthController extends Controller
             $profileLink = Str::lower(str_replace(' ', '', $request->name)) . '' . rand(1000, 9999);
 
             // $downloadImageLink = url('images/user_profiles/qrcodes/' . $profileLink . '.qrcode.png');
-            $data = 'simple-profile://profile/' . $profileLink;
+            $data = url('simple-profile://profile/' . $profileLink);
 
             $qrcodeUrl = $this->generateQrCode($profileLink, $data);
+
+            return response()->json(['applink' => $data, 'qrcode' => $qrcodeUrl]);
 
             if ($qrcodeUrl) {
                 $user = User::create([
